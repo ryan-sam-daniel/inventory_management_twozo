@@ -1,0 +1,2 @@
+javac -d . Inventory_management\bill\*.java Inventory_management\finance\*.java Inventory_management\inventory\*.java Inventory_management\product\*.java Inventory_management\purchase\*.java Inventory_management\Main.java Inventory_management\Store.java
+java Inventory_management.Main
