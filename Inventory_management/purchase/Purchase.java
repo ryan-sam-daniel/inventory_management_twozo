@@ -5,11 +5,6 @@ import Inventory_management.inventory.*;
 import Inventory_management.product.*;
 import Inventory_management.finance.*;
 
-interface PurchaseOperation{
-    public void addToList(String name, int quantity);
-    public void viewPurchases();
-}
-
 
 public class Purchase implements PurchaseOperation{
     private ArrayList<Product> purchase_list;
@@ -24,7 +19,7 @@ public class Purchase implements PurchaseOperation{
     //this method finds the product from inventory and adds it to a product list 
     @Override
     public void addToList(String name, int quantity){
-        Product product = inventory.findProduct(name);
+        Product product = inventory.getProduct(name);
         if(product == null){
             System.out.println("Not found in the inventory");
         }

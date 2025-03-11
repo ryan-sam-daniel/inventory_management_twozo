@@ -4,12 +4,12 @@ import Inventory_management.product.Product;
 import Inventory_management.product.ProductTallying;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Bill implements BillOperation {
+
+
+public class Bill{
     private ArrayList<Product> bill_items;
-    private static HashMap<Integer,ArrayList<Product>> all_bills = new HashMap<>();
+
     private int bill_id;
 
     //Construct for Bill 
@@ -19,7 +19,6 @@ public class Bill implements BillOperation {
     }
 
     //This method adds products to the bill
-    @Override
     public void addToBill(Product product, int quantity){
         if (product.getStockQuantity() > quantity){
             bill_items.add(new Product(product.getName(), product.getPurchasePrice(), product.getMrp(), product.getTaxPercentage(), product.getSellingPrice(), product.getDiscountPercentage(), quantity));
@@ -32,25 +31,17 @@ public class Bill implements BillOperation {
         
     }
 
-    //This method adds the bill along with bill_id to a hashmap for future references
-    public void addToBillingData(){
-       if (!bill_items.isEmpty()){
-            all_bills.put(bill_id,new ArrayList<>(bill_items));
-       }
-    }
-
+    //getter to get Products in the bill
     public ArrayList<Product> getBillItems() {
         return bill_items;
     }
 
-    public static ArrayList<Product> getAllBills(int id){
-        for (Map.Entry<Integer,ArrayList<Product>> entry : all_bills.entrySet()  ){
-            if (id == entry.getKey()){
-                return entry.getValue();
-            }
-        }
-        return null;
+    //get
+    public int getBillId(){
+        return bill_id;
     }
+
+    
     
 }
 

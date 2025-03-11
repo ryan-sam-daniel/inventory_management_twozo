@@ -1,5 +1,6 @@
 package Inventory_management;
 
+import Inventory_management.store.Store;
 
 public class Main {
 

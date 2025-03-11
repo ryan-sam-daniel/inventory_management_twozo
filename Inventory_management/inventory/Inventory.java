@@ -25,7 +25,7 @@ public class Inventory {
         }
     
         //this method finds the product in the list and returns the product
-        public Product findProduct(String name){
+        public Product getProduct(String name){
             for (Product p : inventory_list){
                 if (p.getName().equalsIgnoreCase(name)){
                     return p;

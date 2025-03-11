@@ -1,6 +1,6 @@
 package Inventory_management.finance;
 
-public class FinanceValueAddition {
+public class FinanceValueAddition{
     public static void addExpense(double value){
         double total_expenses = Finance.getTotalExpenses();
         total_expenses += value;
