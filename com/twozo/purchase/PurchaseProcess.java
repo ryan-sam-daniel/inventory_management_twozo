@@ -15,16 +15,16 @@ public class PurchaseProcess implements PurchaseService {
     private final PurchaseDetailsStorer purchaseDetailsStorer;
     private final StockManagementService stockManager;
     private final ProductFinderService productFinder;
-    private final ExpensesUpdationService expenseDetailsStorer;
+    private final ExpensesUpdationService expenseDetailsUpdater;
     private final ProductCostCalculationService purchaseCostCalculator;
     private final List<Purchase> purchaseList;
     private final LocalDateTime purchaseDateTime = LocalDateTime.now();
 
-    public PurchaseProcess (final PurchaseDetailsStorer purchaseDetailsStorer, final StockManagementService stockManager, final ProductFinderService productFinder, final ExpensesUpdationService expenseDetailsStorer, final ProductCostCalculationService purchaseCostCalculator) {
+    public PurchaseProcess (final PurchaseDetailsStorer purchaseDetailsStorer, final StockManagementService stockManager, final ProductFinderService productFinder, final ExpensesUpdationService expenseDetailsUpdater, final ProductCostCalculationService purchaseCostCalculator) {
         this.purchaseDetailsStorer = purchaseDetailsStorer;
         this.stockManager = stockManager;
         this.productFinder = productFinder;
-        this.expenseDetailsStorer = expenseDetailsStorer;
+        this.expenseDetailsUpdater = expenseDetailsUpdater;
         this.purchaseCostCalculator = purchaseCostCalculator;
         this.purchaseList = new ArrayList<>();
     }
@@ -41,7 +41,7 @@ public class PurchaseProcess implements PurchaseService {
         purchaseDetailsStorer.addPurchaseDetails(purchaseList);
         stockManager.addStock(product, quantity);
         final double expense = purchaseCostCalculator.calculate(product);
-        expenseDetailsStorer.addExpense(expense);
+        expenseDetailsUpdater.addExpense(expense);
         System.out.println("Product Purchased");
     }
 

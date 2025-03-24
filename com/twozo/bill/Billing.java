@@ -18,7 +18,7 @@ public interface Billing {
     /**
      * @return billId Unique identifier for the bill.
      */
-    int getBillId();  
+    long getBillId();  
 
     /**
      * @return List<Product> this list contains the Product inside a bill 

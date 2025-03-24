@@ -9,15 +9,15 @@ import com.twozo.inventory.StockManagementService;
 import com.twozo.product.Product;
 
 public class Bill implements Billing{
-    private final int billId;
+    private final long billId;
     private final List<Product> billItems;
     private final LocalDateTime billDateTime;
     private final StockManagementService stockManager;
     private double discountedAmount;
     private double totalAmount;
 
-    public Bill(final int id, final StockManagementService stockManager){
-        this.billId = id;
+    public Bill(final long billId, final StockManagementService stockManager){
+        this.billId = billId;
         this.stockManager = stockManager;
         this.billItems = new ArrayList<>();
         this.billDateTime = LocalDateTime.now(); // Store bill timestamp
@@ -81,7 +81,7 @@ public class Bill implements Billing{
     }
 
     @Override
-    public int getBillId() {
+    public long getBillId() {
         return billId;
     }
 

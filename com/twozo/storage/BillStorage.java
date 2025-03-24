@@ -8,7 +8,7 @@ import java.util.Map;
 import com.twozo.bill.Billing;
 
 public class BillStorage {
-    private static final Map<Integer, List<Billing>> allBills = new HashMap<>();
+    private static final Map<Long, List<Billing>> allBills = new HashMap<>();
 
     public void addToBillStorage(final Billing bill) {
         if (!allBills.containsKey(bill.getBillId())) {
@@ -17,7 +17,7 @@ public class BillStorage {
         allBills.get(bill.getBillId()).add(bill);
     }
 
-    public List<Billing> getBill(final int id) {
+    public List<Billing> getBill(final long id) {
         return allBills.getOrDefault(id, new ArrayList<>());
     }
 

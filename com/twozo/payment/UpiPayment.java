@@ -1,9 +1,9 @@
 package com.twozo.payment;
 
-public class UpiPayment implements PaymentService {
+public class UpiPayment implements PaymentMethods {
     @Override
-    public void pay(){
-        System.out.println("Payment via Upi is successfull");
+    public void pay(PaymentRequest paymentRequest){
+        System.out.println("Payment via Card for Bill Id "+paymentRequest.getId()+ " of Total Amount "+paymentRequest.getAmount()+ " is successful");
     }
 }
 

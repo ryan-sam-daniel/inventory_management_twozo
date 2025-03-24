@@ -7,43 +7,48 @@ import com.twozo.finance.RevenueUpdationService;
 import com.twozo.inventory.InventoryViewerService;
 import com.twozo.inventory.ProductFinderService;
 import com.twozo.inventory.StockManagementService;
-import com.twozo.payment.PaymentHandler;
+import com.twozo.payment.PaymentMethodHandler;
+import com.twozo.payment.PaymentRequest;
 import com.twozo.product.Product;
 import com.twozo.storage.BillStorage;
-
 
 public class BillingInputHandler {
     private final BillStorage billStorage;
     private final BillCalculator billCalculator;
-    private final PaymentHandler paymentHandler;
     private final InventoryViewerService inventoryViewer;
     private final StockManagementService stockManager;
     private final ProductFinderService productFinder;
-    private final RevenueUpdationService revenueDetailsStorer;
+    private final RevenueUpdationService revenueDetailsUpdater;
 
-    public BillingInputHandler(BillStorage billStorage,BillCalculator billCalculator,PaymentHandler paymentHandler
+    public BillingInputHandler(BillStorage billStorage,BillCalculator billCalculator
                           , InventoryViewerService inventoryViewer, StockManagementService stockManager
-                          , ProductFinderService productFinder, RevenueUpdationService revenueDetailsStorer) {
+                          , ProductFinderService productFinder, RevenueUpdationService revenueDetailsUpdater) {
         this.billStorage = billStorage;
         this.billCalculator = billCalculator;
-        this.paymentHandler = paymentHandler;
         this.inventoryViewer = inventoryViewer;
         this.productFinder = productFinder;
-        this.revenueDetailsStorer = revenueDetailsStorer;
+        this.revenueDetailsUpdater = revenueDetailsUpdater;
         this.stockManager = stockManager;
     }
 
     public void createBill(Scanner scanner) {
-        int billId;
+        long billId;
+        int length;
+
         do{
             System.out.println("Enter Phone_no ID:");
-            billId = scanner.nextInt();
-            if (billId < 1 || String.valueOf(billId).length() != 10)
+            billId = scanner.nextLong();
+            length =  String.valueOf(billId).length();
+            if (length == 10 ){
+                break;
+            }
             System.out.println("Invalid bill ID: It must be a 10-digit number.");
-        }while(billId < 1 || String.valueOf(billId).length() != 10);
+        }while(length != 10);
+
         final Billing bill = new Bill(billId, stockManager);
         inventoryViewer.viewInventory();
         int choice;
+
         try {
             while (true) {
                 System.out.println("\n1) Add prooduct \n2) Remove product \n3) Paymnet");
@@ -54,15 +59,18 @@ public class BillingInputHandler {
                     scanner.nextLine();
                     String productChoice = scanner.nextLine();
                     int quantity;
+
                     do{
                         System.out.println("Enter quantity:");
                         quantity = scanner.nextInt();
                         if (quantity < 1)
                         System.out.println("Quantity should be positive");
                     }while(quantity < 1) ;
+
                     Product selectedProduct = productFinder.findProductByName(productChoice);
                     if (selectedProduct != null) {
                         bill.addProductToBill(selectedProduct, quantity);
+                        System.out.println("Product Added successfully ! ");
                     } else {
                         System.out.println("Invalid choice.");
                     }
@@ -72,12 +80,14 @@ public class BillingInputHandler {
                     System.out.println("Enter the product name : ");
                     scanner.nextLine();
                     productChoice = scanner.nextLine();
+
                     do{
                         System.out.println("Enter quantity:");
                         quantity = scanner.nextInt();
                         if (quantity < 1)
                         System.out.println("Quantity should be positive");
                     }while(quantity < 1) ;
+
                     selectedProduct = productFinder.findProductByName(productChoice);
                     if (selectedProduct != null) {
                         bill.removeProductFromBill(selectedProduct, quantity);
@@ -96,9 +106,15 @@ public class BillingInputHandler {
                     System.out.println("Final Amount : "+ final_amount);
                     bill.setTotalAmount(total);
                     bill.setDiscountedAmount(final_amount);
-                    paymentHandler.pay();
+                    if (final_amount == 0){
+                        System.out.println("No need to pay");
+                        break;
+                    }
+                    final PaymentRequest paymentRequest = new PaymentRequest(billId,final_amount);
+                    final PaymentMethodHandler paymentMethodHandler = new PaymentMethodHandler(paymentRequest);
+                    paymentMethodHandler.chooseMethod();
                     billStorage.addToBillStorage(bill);
-                    revenueDetailsStorer.addRevenue(final_amount);
+                    revenueDetailsUpdater.addRevenue(final_amount);
                     break;
 
                     default :
@@ -113,6 +129,5 @@ public class BillingInputHandler {
             System.out.println("Invalid input ! enter a number ");
             choice = scanner.nextInt();
         }
-    
     }
 }

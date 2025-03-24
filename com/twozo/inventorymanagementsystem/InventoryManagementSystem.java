@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import com.twozo.bill.BillCalculator;
 import com.twozo.bill.BillPrinter;
+import com.twozo.bill.BillViewer; 
 import com.twozo.bill.BillViewerService;
 import com.twozo.bill.BillingInputHandler;
 import com.twozo.finance.ExpensesUpdationService;
@@ -16,7 +17,6 @@ import com.twozo.inventory.InventoryViewerService;
 import com.twozo.inventory.ProductFinderService;
 import com.twozo.inventory.StockManagementService;
 import com.twozo.inventory.StockManager;
-import com.twozo.payment.PaymentHandler;
 import com.twozo.product.NewProductAdder;
 import com.twozo.product.Product;
 import com.twozo.product.ProductAddingService;
@@ -26,14 +26,14 @@ import com.twozo.product.ProductPurchaseCost;
 import com.twozo.purchase.PurchaseProcess;
 import com.twozo.purchase.PurchaseService;
 import com.twozo.purchase.PurchasedProductsViewer;
-import com.twozo.purchase.StockPurchaseHandler;
+import com.twozo.purchase.StockPurchaseInputHandler;
 import com.twozo.reports.Report;
 import com.twozo.reports.ReportGenerator;
 import com.twozo.reports.SalesReportGenerator;
 import com.twozo.reports.StockReportGenerator;
 import com.twozo.reports.WeeklySalesReportGenerator;
 import com.twozo.storage.BillStorage;
-import com.twozo.storage.FinanceDetailsStorer;
+import com.twozo.storage.FinanceDetailsUpdater;
 import com.twozo.storage.PurchaseDetailsStorer;
 
 public class InventoryManagementSystem { 
@@ -41,11 +41,11 @@ public class InventoryManagementSystem {
         final InventoryStorage inventoryItems = new InventoryItems();
         final Scanner scanner = new Scanner(System.in);
         final PurchaseDetailsStorer purchaseDetailsStorer = new PurchaseDetailsStorer();
-        final ExpensesUpdationService expenseDetailsStorer = new FinanceDetailsStorer();
-        final RevenueUpdationService revenueDetailsStorer = new FinanceDetailsStorer();
+        final ExpensesUpdationService expenseDetailsUpdater = new FinanceDetailsUpdater();
+        final RevenueUpdationService revenueDetailsUpdater= new FinanceDetailsUpdater();
         final ProductCostCalculationService purchaseCostCalculator = new ProductPurchaseCost();
         final ProductInputHandler productInputHandler = new ProductInputHandler();
-        final ProductAddingService newProductAdder = new NewProductAdder(expenseDetailsStorer,inventoryItems,purchaseCostCalculator,productInputHandler,scanner);
+        final ProductAddingService newProductAdder = new NewProductAdder(expenseDetailsUpdater,inventoryItems,purchaseCostCalculator,productInputHandler,scanner);
         
         // Add initial products to inventory
         inventoryItems.addProductToInventory(new Product("Colgate", 5, 10, 2, 15, 0, 10));
@@ -59,10 +59,9 @@ public class InventoryManagementSystem {
         final BillStorage billStorage = new BillStorage();
         final BillCalculator billCalculator = new BillCalculator();
         final BillPrinter billPrinter = new BillPrinter();
-        final PaymentHandler paymentHandler = new PaymentHandler();
-        final BillingInputHandler billingInputHandler = new BillingInputHandler(billStorage, billCalculator, paymentHandler
-                          ,  inventoryViewer,  stockManager, productFinder, revenueDetailsStorer);
-        final BillViewerService billViewerService = new BillViewerService(billPrinter, billStorage);
+        final BillingInputHandler billingInputHandler = new BillingInputHandler(billStorage, billCalculator
+                          ,  inventoryViewer,  stockManager, productFinder, revenueDetailsUpdater);
+        final BillViewerService billViewerService = new BillViewer(billPrinter, billStorage);
         
         while (true) {
             System.out.println("\n1) View Stock \n2) Purchase Stock \n3) View Purchases \n4) Create Bill \n5) View Bill \n6) Generate Sales Report \n7) Generate Weekly Report \n8) Generate Stock Report \n9) Add New Product \n10) Exit");
@@ -75,8 +74,8 @@ public class InventoryManagementSystem {
                 break;   
 
                 case 2:
-                final PurchaseService purchasesListAdder = new PurchaseProcess(purchaseDetailsStorer, stockManager, productFinder, expenseDetailsStorer, purchaseCostCalculator);
-                final StockPurchaseHandler stockBuyer = new StockPurchaseHandler(purchasesListAdder);
+                final PurchaseService purchasesprocess = new PurchaseProcess(purchaseDetailsStorer, stockManager, productFinder, expenseDetailsUpdater, purchaseCostCalculator);
+                final StockPurchaseInputHandler stockBuyer = new StockPurchaseInputHandler(purchasesprocess);
                 stockBuyer.purchaseStock();
                 break;
 
@@ -96,8 +95,8 @@ public class InventoryManagementSystem {
                 final ReportGenerator salesReporter = new SalesReportGenerator(billStorage);
                 final Report salesReport = salesReporter.generateReport();
                 salesReport.reportPrinter();
-                System.out.println("Overall Expenses : "+expenseDetailsStorer.getTotalExpenses());
-                System.out.println("Overall Revenue : "+revenueDetailsStorer.getTotalRevenue());
+                System.out.println("Overall Expenses : "+expenseDetailsUpdater.getTotalExpenses());
+                System.out.println("Overall Revenue : "+revenueDetailsUpdater.getTotalRevenue());
                 break;
 
                 case 7:
