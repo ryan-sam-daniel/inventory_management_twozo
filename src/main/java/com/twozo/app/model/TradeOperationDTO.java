@@ -1,0 +1,29 @@
+package com.twozo.app.model;
+
+public class TradeOperationDTO {
+    private int id;
+    private int quantity;
+
+    public TradeOperationDTO(){}
+
+    public TradeOperationDTO(final int id, final int quantity){
+        this.id = id;
+        this.quantity = quantity;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+}
